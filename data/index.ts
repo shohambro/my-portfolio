@@ -173,7 +173,7 @@ export const companies = [
 export const workExperience = [
   {
     id: 1,
-    title: "ReactJS Developer Intern (Vikram Solar)",
+    title: "ReactJS Developement Intern (Vikram Solar)",
     desc: "Assisted in the development of a web-based platform using React.js, enhancing interactivity.",
     className: "md:col-span-2",
     thumbnail: "/exp1.svg",
@@ -187,8 +187,8 @@ export const workExperience = [
   },
   {
     id: 3,
-    title: "Freelance Web Dev Project",
-    desc: "Led the dev of a web application for an astrologer client, from initial concept to deployment.",
+    title: "Freelance Web Developer Project",
+    desc: "Led the development of a web application for an astrologer client, from requirement gathering to deployment.",
     className: "md:col-span-2",
     thumbnail: "/exp3.svg",
   },
