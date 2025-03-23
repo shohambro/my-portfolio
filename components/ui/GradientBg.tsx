@@ -39,26 +39,50 @@ export const BackgroundGradientAnimation = ({
   const [curY, setCurY] = useState(0);
   const [tgX, setTgX] = useState(0);
   const [tgY, setTgY] = useState(0);
-  useEffect(() => {
-    document.body.style.setProperty(
-      "--gradient-background-start",
-      gradientBackgroundStart
-    );
-    document.body.style.setProperty(
-      "--gradient-background-end",
-      gradientBackgroundEnd
-    );
-    document.body.style.setProperty("--first-color", firstColor);
-    document.body.style.setProperty("--second-color", secondColor);
-    document.body.style.setProperty("--third-color", thirdColor);
-    document.body.style.setProperty("--fourth-color", fourthColor);
-    document.body.style.setProperty("--fifth-color", fifthColor);
-    document.body.style.setProperty("--pointer-color", pointerColor);
-    document.body.style.setProperty("--size", size);
-    document.body.style.setProperty("--blending-value", blendingValue);
-  }, []);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isSafari, setIsSafari] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+
+    if (typeof navigator !== "undefined") {
+      setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+    }
+
+    if (typeof document !== "undefined") {
+      document.body.style.setProperty(
+        "--gradient-background-start",
+        gradientBackgroundStart
+      );
+      document.body.style.setProperty(
+        "--gradient-background-end",
+        gradientBackgroundEnd
+      );
+      document.body.style.setProperty("--first-color", firstColor);
+      document.body.style.setProperty("--second-color", secondColor);
+      document.body.style.setProperty("--third-color", thirdColor);
+      document.body.style.setProperty("--fourth-color", fourthColor);
+      document.body.style.setProperty("--fifth-color", fifthColor);
+      document.body.style.setProperty("--pointer-color", pointerColor);
+      document.body.style.setProperty("--size", size);
+      document.body.style.setProperty("--blending-value", blendingValue);
+    }
+  }, [
+    gradientBackgroundStart,
+    gradientBackgroundEnd,
+    firstColor,
+    secondColor,
+    thirdColor,
+    fourthColor,
+    fifthColor,
+    pointerColor,
+    size,
+    blendingValue,
+  ]);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     function move() {
       if (!interactiveRef.current) {
         return;
@@ -71,7 +95,7 @@ export const BackgroundGradientAnimation = ({
     }
 
     move();
-  }, [tgX, tgY]);
+  }, [tgX, tgY, curX, curY, isMounted]);
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
     if (interactiveRef.current) {
@@ -81,17 +105,27 @@ export const BackgroundGradientAnimation = ({
     }
   };
 
-  const [isSafari, setIsSafari] = useState(false);
-  useEffect(() => {
-    setIsSafari(/^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-  }, []);
-
   return (
     <div
       className={cn(
         "w-full h-full absolute overflow-hidden top-0 left-0 bg-[linear-gradient(40deg,var(--gradient-background-start),var(--gradient-background-end))]",
         containerClassName
       )}
+      style={
+        {
+          // Provide fallback values for SSR
+          "--gradient-background-start": gradientBackgroundStart,
+          "--gradient-background-end": gradientBackgroundEnd,
+          "--first-color": firstColor,
+          "--second-color": secondColor,
+          "--third-color": thirdColor,
+          "--fourth-color": fourthColor,
+          "--fifth-color": fifthColor,
+          "--pointer-color": pointerColor,
+          "--size": size,
+          "--blending-value": blendingValue,
+        } as React.CSSProperties
+      }
     >
       <svg className="hidden">
         <defs>
@@ -164,7 +198,7 @@ export const BackgroundGradientAnimation = ({
           )}
         ></div>
 
-        {interactive && (
+        {interactive && isMounted && (
           <div
             ref={interactiveRef}
             onMouseMove={handleMouseMove}
